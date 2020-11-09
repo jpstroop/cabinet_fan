@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 "rpi.bme280" = "*"
+adafruit-blinka = "*"
+adafruit-circuitpython-charlcd = "*"
 
 [dev-packages]
 pre-commit = "*"
