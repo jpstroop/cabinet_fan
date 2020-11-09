@@ -38,4 +38,4 @@ See [Pipfile](./Pipfile) or [requirements.txt](./requirements.txt) and install u
 
 #### HD44780
 
- * [Instructions](https://tutorials-raspberrypi.com/raspberry-pi-lcd-display-16x2-characters-display-hd44780/)
+ * [Instructions](https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/overview/)
