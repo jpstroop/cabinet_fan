@@ -4,12 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"rpi.bme280" = "*"
-adafruit-blinka = "*"
+"RPi.bme280" = "*"
+Adafruit-Blinka = "*"
 adafruit-circuitpython-charlcd = "*"
 
 [dev-packages]
-pre-commit = "*"
 
 [requires]
 python_version = "3.8"
