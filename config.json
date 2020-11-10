@@ -1,5 +1,5 @@
 {
-  "sample_interval" : 2,
+  "sample_interval" : 5,
   "bme280_address" : "0x76",
   "lcd" : {
     "rs" : 22,
