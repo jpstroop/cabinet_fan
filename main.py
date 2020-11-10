@@ -1,9 +1,8 @@
+from adafruit_bme280 import Adafruit_BME280_I2C
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
-from bme280 import load_calibration_params
-from bme280 import sample
+from busio import I2C
 from datetime import datetime
 from digitalio import DigitalInOut
-from smbus2 import SMBus
 from time import sleep
 import board
 
@@ -11,13 +10,11 @@ import board
 
 SAMPLE_INTERVAL = 5 # minutes
 
-address = int("0x76", 16) # Change to 0x77 if necessary
-bus = SMBus(1) # Change arg if bme 280 is connected to a different port (than 1)
-calibration_params = load_calibration_params(bus, address)
+i2c = I2C(board.SCL, board.SDA)
+bme280 = Adafruit_BME280_I2C(i2c, address=0x76)
 
 def sample_temp():
-    data = sample(bus, address, calibration_params)
-    return data.temperature * 1.8 + 32
+    return bme280.temperature * 1.8 + 32
 
 
 # Modify this if you have a different sized character LCD
@@ -50,8 +47,6 @@ while True:
 
     if now.minute % SAMPLE_INTERVAL == 0 and now.minute != sample_minute:
         # TODO: log
-        print("sampling...")
-        print(now)
         temp = sample_temp()
         sample_minute = now.minute
 

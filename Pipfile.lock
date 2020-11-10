@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7d3f6cab54e4aa544f58bf77facc620b20d9a59f21b084a3318c623aac5d6889"
+            "sha256": "6107b7f9d5d70dea2a76d103002b5000a39247a96acfac7d4777ede18ccae373"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -28,6 +28,13 @@
                 "sha256:cdfb62846cc646f1664e0f607faadd2af57539afbec871111f9a900e4a637d5e"
             ],
             "version": "==1.2.1"
+        },
+        "adafruit-circuitpython-bme280": {
+            "hashes": [
+                "sha256:6585fc03e8ab61db35727b7b35e943ceb0e51d5a2fbee37a57eacbff810cf957"
+            ],
+            "index": "pypi",
+            "version": "==2.5.0"
         },
         "adafruit-circuitpython-busdevice": {
             "hashes": [
@@ -80,19 +87,12 @@
             ],
             "version": "==1.1.0"
         },
-        "rpi.bme280": {
+        "rpi.gpio": {
             "hashes": [
-                "sha256:11c25e549b7f3ef2e41d463195e04994ef7add9e8ccd2616ccf58d322d783b9c",
-                "sha256:1654a007a828373e083173d5e319475af8cb660a817acd78d0bc7c52ef0de9a5"
+                "sha256:7424bc6c205466764f30f666c18187a0824077daf20b295c42f08aea2cb87d3f"
             ],
             "index": "pypi",
-            "version": "==0.2.3"
-        },
-        "smbus2": {
-            "hashes": [
-                "sha256:210e66eebe4d0b1fe836b3ec2751841942e1c4918c0b429b20a0e20a222228b4"
-            ],
-            "version": "==0.3.0"
+            "version": "==0.7.0"
         }
     },
     "develop": {}
