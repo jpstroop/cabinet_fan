@@ -1,6 +1,10 @@
-# Fancabinet 
+# Fancabinet
 
 Raspberry Pi project to control AC cooling fans for a media cabinet based on readings from a BME280.
+
+## To Run
+
+There are sensible defaults, and they assume the steps/setting explained below under [Hardware](#Hardware). Everything can be overridden in [config.json](./config.json). This file can be a sibling of main.py, or can be copied to `~/cabinet_fan.json`. The latter instance will be preferred if it exists.
 
 ## Dependencies
 
