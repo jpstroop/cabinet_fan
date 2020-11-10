@@ -13,7 +13,6 @@ from os.path import join
 from time import sleep
 import board
 
-# TODO: read stuff from config file
 def find_config():
     '''~/cabinet_fan.json will override ./config.json, but the assumption
     is that ~/cabinet_fan.json will contain all values; there is no inheritance.
@@ -42,13 +41,12 @@ def configure_lcd(config, cols=16, rows=2):
     return lcd
 
 def configure_bme289(config):
-    # TODO change to SPI?
+    # TODO Allow choice of I2C or SPI?
     address = int(config.get('bme280_address', "0x77"), 16) # hex value is stored as a str
     i2c = I2C(board.SCL, board.SDA)
     return Adafruit_BME280_I2C(i2c, address=address)
 
 def sample_temp(bme280, log=False):
-    # TODO: log
     temp_f = bme280.temperature * 1.8 + 32
     if log:
         print(f'{dt.now() } sample: {temp_f}')
