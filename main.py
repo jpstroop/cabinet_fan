@@ -12,6 +12,7 @@ from os.path import expanduser
 from os.path import join
 from time import sleep
 import board
+import RPi.GPIO as gpio
 
 def find_config():
     '''~/cabinet_fan.json will override ./config.json, but the assumption
@@ -52,27 +53,47 @@ def sample_temp(bme280, log=False):
         print(f'{dt.now() } sample: {temp_f}')
     return temp_f
 
-def run(config, bme280, lcd, log=False):
+def run(config, bme280, lcd, fan, log=False):
     sample_interval = config.get('sample_interval', 5)
     temp = sample_temp(bme280, log)
     now = dt.now()
     sample_minute = now.minute
     while True:
-        line_1 = now.strftime('%b %d %I:%M %p')
+        line_1 = now.strftime('%b %d %I:%M %p') # TODO: make configurable
         line_2 = f'{round(temp, 1)} F'
         lcd.message = f'{line_1}\n{line_2}'
         if now.minute % sample_interval == 0 and now.minute != sample_minute:
             temp = sample_temp(bme280, log)
             sample_minute = now.minute
-            # if temp > MAX:
-            #     fan_on()
-            # elif temp <= MAX:
-            #     fan_off()
+            if temp > fan.max_temp:
+                 fan.on()
+            elif temp <= fan.max_temp:
+                 fan.off()
         now = dt.now()
         sleep(1)
+
+class Fan():
+    def __init__(self, config):
+        self.led_pin = config["fan"].get("fan_led", 15)
+        self.max_temp = config["fan"].get("max_temp", 78)
+        gpio.setmode(gpio.BCM) # what is the scope of this?
+        gpio.setwarnings(False)
+        gpio.setup(self.led_pin, gpio.OUT)
+
+    def on(self):
+        gpio.output(self.led_pin, gpio.HIGH)
+
+    def off(self):
+        gpio.output(self.led_pin, gpio.LOW)
+
 
 if __name__ == "__main__":
     config = load_config(find_config())
     bme280 = configure_bme289(config)
     lcd = configure_lcd(config)
-    run(config, bme280, lcd, log=True)
+    fan = Fan(config)
+    run(config, bme280, lcd, fan, log=True)
+
+    # TODO: need an exit hook that turns off the fan and clears the led
+    # TODO: can we also cut power to the LED?
+
