@@ -1,5 +1,6 @@
 from adafruit_bme280 import Adafruit_BME280_I2C
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
+from atexit import register as exit_callback
 from busio import I2C
 from datetime import datetime as dt
 from digitalio import DigitalInOut
@@ -53,6 +54,15 @@ def sample_temp(bme280, log=False):
         print(f'{dt.now() } sample: {temp_f}')
     return temp_f
 
+def shutdown(fan, lcd, log=False):
+    # TODO: can we also cut power to the LED?
+    if log:
+        print(f'{dt.now()} shutting down...', end='' )
+    lcd.clear()
+    fan.off()
+    if log:
+        print(f'Done')
+
 def run(config, bme280, lcd, fan, log=False):
     sample_interval = config.get('sample_interval', 5)
     temp = sample_temp(bme280, log)
@@ -92,8 +102,6 @@ if __name__ == "__main__":
     bme280 = configure_bme289(config)
     lcd = configure_lcd(config)
     fan = Fan(config)
+    exit_callback(shutdown, fan, lcd, log=True)
     run(config, bme280, lcd, fan, log=True)
-
-    # TODO: need an exit hook that turns off the fan and clears the led
-    # TODO: can we also cut power to the LED?
 
