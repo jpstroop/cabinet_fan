@@ -1,8 +1,10 @@
 from adafruit_bme280 import Adafruit_BME280_I2C
 from adafruit_character_lcd.character_lcd import Character_LCD_Mono
+from atexit import register as exit_callback
 from busio import I2C
 from datetime import datetime as dt
 from digitalio import DigitalInOut
+from digitalio import Direction
 from importlib import import_module
 from json import load
 from os.path import abspath
@@ -12,6 +14,7 @@ from os.path import expanduser
 from os.path import join
 from time import sleep
 import board
+import RPi.GPIO as gpio
 
 def find_config():
     '''~/cabinet_fan.json will override ./config.json, but the assumption
@@ -52,27 +55,53 @@ def sample_temp(bme280, log=False):
         print(f'{dt.now() } sample: {temp_f}')
     return temp_f
 
-def run(config, bme280, lcd, log=False):
+def shutdown(fan, lcd, log=False):
+    # TODO: can we also cut power to the LED?
+    if log:
+        print(f'{dt.now()} shutting down...', end='' )
+    lcd.clear()
+    fan.off()
+    if log:
+        print(f'Done')
+
+def run(config, bme280, lcd, fan, log=False):
     sample_interval = config.get('sample_interval', 5)
     temp = sample_temp(bme280, log)
     now = dt.now()
     sample_minute = now.minute
     while True:
-        line_1 = now.strftime('%b %d %I:%M %p')
+        line_1 = now.strftime('%b %d %I:%M %p') # TODO: make configurable
         line_2 = f'{round(temp, 1)} F'
         lcd.message = f'{line_1}\n{line_2}'
         if now.minute % sample_interval == 0 and now.minute != sample_minute:
             temp = sample_temp(bme280, log)
             sample_minute = now.minute
-            # if temp > MAX:
-            #     fan_on()
-            # elif temp <= MAX:
-            #     fan_off()
+            if temp > fan.max_temp:
+                 fan.on()
+            elif temp <= fan.max_temp:
+                 fan.off()
         now = dt.now()
         sleep(1)
+
+class Fan():
+    def __init__(self, config):
+        self.max_temp = config["fan"].get("max_temp", 78)
+        self.power = DigitalInOut(getattr(board, f"D{config['fan'].get('power_pin', 15)}"))
+        power.direction = Direction.OUTPUT
+        power.value = False
+
+    def on(self):
+        power.value = True
+
+    def off(self):
+        power.value = False
+
 
 if __name__ == "__main__":
     config = load_config(find_config())
     bme280 = configure_bme289(config)
     lcd = configure_lcd(config)
-    run(config, bme280, lcd, log=True)
+    fan = Fan(config)
+    exit_callback(shutdown, fan, lcd, log=True)
+    run(config, bme280, lcd, fan, log=True)
+

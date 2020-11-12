@@ -1,6 +1,11 @@
 {
+  "note" : "All pin numbers refer to their BCM/GPIO number",
   "sample_interval" : 5,
   "bme280_address" : "0x76",
+  "fan" : {
+    "power_pin" : 15,
+    "max_temp" : 78
+  },
   "lcd" : {
     "rs" : 22,
     "en" : 17,
