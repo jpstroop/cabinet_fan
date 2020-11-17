@@ -41,3 +41,7 @@ See [Pipfile](./Pipfile) or [requirements.txt](./requirements.txt) and install u
 #### HD44780
 
  * [Instructions](https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/overview/)
+
+## Schematic
+
+![Schematic 0.0.1](/schema0.0.1.png?raw=true)
