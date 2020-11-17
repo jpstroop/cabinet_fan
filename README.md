@@ -1,5 +1,3 @@
-# Fancabinet
-
 Raspberry Pi project to control AC cooling fans for a media cabinet based on readings from a BME280.
 
 ## To Run
