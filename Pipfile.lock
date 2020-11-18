@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6107b7f9d5d70dea2a76d103002b5000a39247a96acfac7d4777ede18ccae373"
+            "sha256": "bfabdec7bef2d7f907172cef1ebc96b20a1d53b00537bb943fd1f43a766c5f3b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -29,12 +29,12 @@
             ],
             "version": "==1.2.1"
         },
-        "adafruit-circuitpython-bme280": {
+        "adafruit-circuitpython-bmp280": {
             "hashes": [
-                "sha256:6585fc03e8ab61db35727b7b35e943ceb0e51d5a2fbee37a57eacbff810cf957"
+                "sha256:1f3b7d3bab28914024cc64cc9ae26f7a3368a060483aa496a1af8bb3aa387cbe"
             ],
             "index": "pypi",
-            "version": "==2.5.0"
+            "version": "==3.2.3"
         },
         "adafruit-circuitpython-busdevice": {
             "hashes": [
@@ -44,10 +44,10 @@
         },
         "adafruit-circuitpython-charlcd": {
             "hashes": [
-                "sha256:cf5af3bb9bfb376e68c055a66d91536ff03d0bf988326d06037ad37d4ba32064"
+                "sha256:514efed33533cf870e8803167f2b684873235f022e07e8da64b1a8988be6e3bb"
             ],
             "index": "pypi",
-            "version": "==3.3.3"
+            "version": "==3.3.4"
         },
         "adafruit-circuitpython-mcp230xx": {
             "hashes": [

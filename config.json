@@ -1,7 +1,11 @@
 {
   "note" : "All pin numbers refer to their BCM/GPIO number",
   "sample_interval" : 5,
-  "bme280_address" : "0x76",
+  "bmp280" : {
+    "note" : "cs0 is the pin for the primary SPI interface, cs1 is for the auxiliary SPI interface",
+    "cs0" : 5,
+    "cs1" : 6
+  },
   "fan" : {
     "power_pin" : 15,
     "max_temp" : 78

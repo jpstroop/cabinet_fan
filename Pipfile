@@ -5,9 +5,9 @@ name = "pypi"
 
 [packages]
 adafruit-circuitpython-charlcd = "*"
-adafruit-circuitpython-bme280 = "*"
-adafruit-blinka = "*"
-"rpi.gpio" = "*"
+Adafruit-Blinka = "*"
+"RPi.GPIO" = "*"
+adafruit-circuitpython-bmp280 = "*"
 
 [dev-packages]
 

@@ -20,27 +20,29 @@ See [Pipfile](./Pipfile) or [requirements.txt](./requirements.txt) and install u
 
 ### Hardware
 
-#### BME280
+#### BMP280
 
- * [Instructions](https://www.raspberrypi-spy.co.uk/2016/07/using-bme280-i2c-temperature-pressure-sensor-in-python)
- * Test your connection with `i2cdetect -y 1`
+Enable SPI and the auxiliary SPI by adding:
 
-    You should see something like:
-    ```
-         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-    00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-    10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    70: -- -- -- -- -- -- 76 --
-    ```
+```
+dtparam=spi=on
+dtoverlay=spi1-3cs
+```
+
+to `/boot/config.txt` and restarting your pi. I'd love to say there's a single great tutorial out there on running multiple BMP280s on one pi, but no such luck. I used [this device](https://www.amazon.com/gp/product/B07S98QBTQ/) and was able to get everything working. The pins on that device map as follows:
+
+| Sensor | Raspberry pi               |
+| ------ | -------------------------- |
+| VCC    | 3v3 power                  |
+| GND    | ground                     |
+| SCL    | SCLK (GPIO 11 / 21)        |
+| SDA    | MOSI (GPIO 10 / 20)        |
+| CSB    | (Chip Select - you choose) |
+| SDO    | MISO (GPIO 9 / 19)         |
 
 #### HD44780
 
- * [Instructions](https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/overview/)
+This is more straightforward. Setup is based on these [instructions](https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/overview/). I used [these](https://www.amazon.com/gp/product/B00HJ6AFW6/).
 
 ## Schematic
 
