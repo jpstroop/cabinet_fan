@@ -14,7 +14,6 @@ from os.path import expanduser
 from os.path import join
 from time import sleep
 import board
-import RPi.GPIO as gpio
 
 def find_config():
     '''~/cabinet_fan.json will override ./config.json, but the assumption
@@ -43,9 +42,8 @@ def configure_lcd(config, cols=16, rows=2):
     lcd.clear()
     return lcd
 
-def configure_bme289(config):
-    # TODO Allow choice of I2C or SPI?
-    address = int(config.get('bme280_address', "0x77"), 16) # hex value is stored as a str
+def configure_bme280(config):
+    address = int(config.get('bme280_address', "0x77"), 16)
     i2c = I2C(board.SCL, board.SDA)
     return Adafruit_BME280_I2C(i2c, address=address)
 
@@ -56,7 +54,6 @@ def sample_temp(bme280, log=False):
     return temp_f
 
 def shutdown(fan, lcd, log=False):
-    # TODO: can we also cut power to the LED?
     if log:
         print(f'{dt.now()} shutting down...', end='' )
     lcd.clear()
@@ -87,19 +84,19 @@ class Fan():
     def __init__(self, config):
         self.max_temp = config["fan"].get("max_temp", 78)
         self.power = DigitalInOut(getattr(board, f"D{config['fan'].get('power_pin', 15)}"))
-        power.direction = Direction.OUTPUT
-        power.value = False
+        self.power.direction = Direction.OUTPUT
+        self.power.value = False
 
     def on(self):
-        power.value = True
+        self.power.value = True
 
     def off(self):
-        power.value = False
+        self.power.value = False
 
 
 if __name__ == "__main__":
     config = load_config(find_config())
-    bme280 = configure_bme289(config)
+    bme280 = configure_bme280(config)
     lcd = configure_lcd(config)
     fan = Fan(config)
     exit_callback(shutdown, fan, lcd, log=True)
