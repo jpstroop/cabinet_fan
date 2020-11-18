@@ -75,8 +75,8 @@ def run(config, bmp280_0, bmp280_1, lcd, fan, log=False):
     now = dt.now()
     sample_minute = now.minute
     while True:
-        line_1 = f'Room: {round(sample_temp(bmp280_1), 1)} F'
-        line_2 = f'Cabinet: {round(temp, 1)} F'
+        line_1 = now.strftime('%b %d %I:%M %p')
+        line_2 = f'I:{round(temp, 1)}F O:{round(sample_temp(bmp280_1), 1)}F'
         lcd.message = f'{line_1}\n{line_2}'
         if now.minute % sample_interval == 0 and now.minute != sample_minute:
             temp = sample_temp(bmp280_0)
