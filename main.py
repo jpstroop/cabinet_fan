@@ -1,120 +1,112 @@
 from adafruit_bmp280 import Adafruit_BMP280_SPI
-from adafruit_character_lcd.character_lcd import Character_LCD_Mono
-from atexit import register as exit_callback
-<<<<<<< HEAD
-from busio import I2C
-=======
+from adafruit_character_lcd.character_lcd import Character_LCD_RGB
+from atexit import register as register_exit_callback
 from busio import SPI
->>>>>>> spi
 from datetime import datetime as dt
 from digitalio import DigitalInOut
 from digitalio import Direction
-from importlib import import_module
 from json import load
 from os.path import abspath
 from os.path import dirname
 from os.path import exists
 from os.path import expanduser
 from os.path import join
+from pulseio import PWMOut
 from time import sleep
 import board
 
-def find_config():
-    '''~/cabinet_fan.json will override ./config.json, but the assumption
-    is that ~/cabinet_fan.json will contain all values; there is no inheritance.
-    '''
-    local = join(expanduser('~'), 'cabinet_fan.json')
-    sibling = join(dirname(__file__), 'config.json')
-    if exists(local):
-        return local
-    else:
-        return sibling
+class App()
+    def __init__(self):
+        config = App._load_config()
+        sensor_config = config['temp_sensors']
+        self.onboard_sensor = TempSensor(sensor_config['onboard_pin'], 0)
+        self.cabinet_sensor = TempSensor(sensor_config['cabinet_pin'], 1)
+        self.lcd = App._config_lcd(config['lcd'])
+        self.fan = Fan(config['fan']['power_pin'])
+        self.sample_interval = config['app']['sample_interval']
+        self.max_temp = config['app']['max_temp']
+        register_exit_callback(self._shutdown())
 
-def load_config(pth):
-    with open(pth) as f:
-        config = load(f)
-    return config
+    @staticmethod
+    def _config_lcd(config, cols=20, rows=4):
+        rs = DigitalInOut(getattr(board, f"D{config.get('rs', 22)}"))
+        en = DigitalInOut(getattr(board, f"D{config.get('en', 17)}"))
+        d4 = DigitalInOut(getattr(board, f"D{config.get('d4', 25)}"))
+        d5 = DigitalInOut(getattr(board, f"D{config.get('d5', 24)}"))
+        d6 = DigitalInOut(getattr(board, f"D{config.get('d6', 23)}"))
+        d7 = DigitalInOut(getattr(board, f"D{config.get('d7', 18)}"))
+        red = PWMOut(getattr(board, f"D{config['lcd'].get('r', 21)}"))
+        green = PWMOut(getattr(board, f"D{config['lcd'].get('g', 12)}"))
+        blue = PWMOut(getattr(board, f"D{config['lcd'].get('b', 13)}"))
+        lcd = Character_LCD_RGB(rs, en, d4, d5, d6, d7, cols, rows, red, green, blue)
+        lcd.clear()
+        return lcd
 
-def configure_lcd(config, cols=16, rows=2):
-    rs = DigitalInOut(getattr(board, f"D{config['lcd'].get('rs', 22)}"))
-    en = DigitalInOut(getattr(board, f"D{config['lcd'].get('en', 17)}"))
-    d4 = DigitalInOut(getattr(board, f"D{config['lcd'].get('d4', 25)}"))
-    d5 = DigitalInOut(getattr(board, f"D{config['lcd'].get('d5', 24)}"))
-    d6 = DigitalInOut(getattr(board, f"D{config['lcd'].get('d6', 23)}"))
-    d7 = DigitalInOut(getattr(board, f"D{config['lcd'].get('d7', 18)}"))
-    lcd = Character_LCD_Mono(rs, en, d4, d5, d6, d7, cols, rows)
-    lcd.clear()
-    return lcd
+    def _shutdown(self):
+        self.lcd.clear()
+        # TODO: turn off LCD??
+        self.fan.off()
 
-<<<<<<< HEAD
-def configure_bme280(config):
-    address = int(config.get('bme280_address', "0x77"), 16)
-    i2c = I2C(board.SCL, board.SDA)
-    return Adafruit_BME280_I2C(i2c, address=address)
-=======
-def configure_bmp280s(config):
-    spi0 = SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-    cs0 = DigitalInOut(getattr(board, f"D{config['bmp280'].get('cs0', 5)}"))
-    sensor0 = Adafruit_BMP280_SPI(spi0, cs0)
->>>>>>> spi
+    @staticmethod
+    def _load_config():
+        pth = App._find_config()
+        with open(pth) as f:
+            config = load(f)
+            return config
 
-    spi1 = SPI(board.SCK_1, MOSI=board.MOSI_1, MISO=board.MISO_1)
-    cs1 = DigitalInOut(getattr(board, f"D{config['bmp280'].get('cs1', 6)}"))
-    sensor1 = Adafruit_BMP280_SPI(spi1, cs1)
+    @staticmethod
+    def _find_config(self):
+        '''~/cabinet_fan.json will override ./config.json, but the assumption
+        is that ~/cabinet_fan.json will contain all values; there is no inheritance.
+        '''
+        local = join(expanduser('~'), 'cabinet_fan.json')
+        sibling = join(dirname(__file__), 'config.json')
+        if exists(local):
+            return local
+        else:
+            return sibling
 
-    return (sensor0, sensor1)
-
-def sample_temp(bmp280):
-    temp_f = bmp280.temperature * 1.8 + 32
-    return temp_f
-
-def shutdown(fan, lcd, log=False):
-<<<<<<< HEAD
-=======
-    # TODO: can we also cut power to the LCD?
->>>>>>> spi
-    if log:
-        print(f'{dt.now()} shutting down...', end='' )
-    lcd.clear()
-    fan.off()
-    if log:
-        print(f'Done')
-
-<<<<<<< HEAD
-def run(config, bme280, lcd, fan, log=False):
-=======
-def run(config, bmp280_0, bmp280_1, lcd, fan, log=False):
-    '''bmp280_0 should will turn the fan on and off, bmp280_1 is on the board and will
-    report the ambient temperature.
-    '''
->>>>>>> spi
-    sample_interval = config.get('sample_interval', 5)
-    temp = sample_temp(bmp280_0)
-    now = dt.now()
-    sample_minute = now.minute
-    while True:
-<<<<<<< HEAD
-        line_1 = now.strftime('%b %d %I:%M %p') # TODO: make configurable
-        line_2 = f'{round(temp, 1)} F'
-=======
-        line_1 = now.strftime('%b %d %I:%M %p')
-        line_2 = f'I:{round(temp, 1)}F O:{round(sample_temp(bmp280_1), 1)}F'
->>>>>>> spi
-        lcd.message = f'{line_1}\n{line_2}'
-        if now.minute % sample_interval == 0 and now.minute != sample_minute:
-            temp = sample_temp(bmp280_0)
-            sample_minute = now.minute
-            if temp > fan.max_temp:
-                 fan.on()
-            elif temp <= fan.max_temp:
-                 fan.off()
+    def run(self):
+        cabinet_temp = self.cabinet_sensor.sample_temp()
         now = dt.now()
-        sleep(1)
+        sample_minute = now.minute
+        while True:
+            line_1 = now.strftime('%b %d %I:%M %p')
+            # TODO: create a degree character
+            line_2 = f'Internal: {cabinet_temp)} F'
+            line_3 = f'Outside: {self.onboard_sensor.sample_temp()} F'
+            lcd.message = f'{line_1}\n{line_2}\n{line_3}'
+            if now.minute % self.sample_interval == 0 and now.minute != sample_minute:
+                cabinet_temp = self.cabinet_sensor.sample_temp()
+                sample_minute = now.minute
+                # TODO: set background color based on cabinet_temp
+                if cabinet_temp > self.max_temp:
+                     fan.on()
+                elif cabinet_temp <= self.max_temp:
+                     fan.off()
+            now = dt.now()
+            sleep(1)
+
+class TempSensor():
+    def __init__(self, pin_no, spi_interface):
+        spi = None
+        if spi_interface == 0:
+            spi = SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+        elif spi_interface == 1:
+            spi = SPI(board.SCK_1, MOSI=board.MOSI_1, MISO=board.MISO_1)
+        pin = getattr(board, f'D{pin_no}')
+        cs = DigitalInOut(pin)
+        self.sensor = Adafruit_BMP280_SPI(spi, cs)
+
+    def sample_temp(unit='F'):
+        if unit == 'F':
+            return round(bmp280.temperature * 1.8 + 32, 1)
+        else:
+            return round(bmp280.temperature, 1)
 
 class Fan():
-    def __init__(self, config):
-        self.max_temp = config["fan"].get("max_temp", 78)
-        self.power = DigitalInOut(getattr(board, f"D{config['fan'].get('power_pin', 15)}"))
+    def __init__(self, power_pin):
+        self.power = DigitalInOut(getattr(board, f'D{power_pin}'))
         self.power.direction = Direction.OUTPUT
         self.power.value = False
 
@@ -126,18 +118,5 @@ class Fan():
 
 
 if __name__ == "__main__":
-    config = load_config(find_config())
-<<<<<<< HEAD
-    bme280 = configure_bme280(config)
-    lcd = configure_lcd(config)
-    fan = Fan(config)
-    exit_callback(shutdown, fan, lcd, log=True)
-    run(config, bme280, lcd, fan, log=True)
-=======
-    bmp280_0, bmp280_1 = configure_bmp280s(config)
-    lcd = configure_lcd(config)
-    fan = Fan(config)
-    exit_callback(shutdown, fan, lcd, log=True)
-    run(config, bmp280_0, bmp280_1, lcd, fan, log=True)
->>>>>>> spi
-
+    app = App()
+    app.run()

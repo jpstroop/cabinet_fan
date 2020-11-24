@@ -1,25 +1,30 @@
 {
   "note" : "All pin numbers refer to their BCM/GPIO number",
-  "sample_interval" : 5,
-<<<<<<< HEAD
-  "bme280_address" : "0x76",
-=======
-  "bmp280" : {
-    "note" : "cs0 is the pin for the primary SPI interface, cs1 is for the auxiliary SPI interface",
-    "cs0" : 5,
-    "cs1" : 6
-  },
->>>>>>> spi
-  "fan" : {
-    "power_pin" : 15,
+  "app" : {
+    "note" : "time in minutes, temp in F",
+    "sample_interval" : 5,
     "max_temp" : 78
   },
+  "temp_sensors" : {
+    "note" : "The onboard sensor is on the SPI0 interface; cabinet is SPI1",
+    "see" : "https://pinout.xyz/pinout/spi",
+    "onboard_pin" : 5,
+    "cabinet_pin" : 6
+  },
+  "fan" : {
+    "power_pin" : 15
+  },
   "lcd" : {
+    "note" : "Assumes a 20x4 LCD with an RGB backlight",
+    "see" : "https://learn.adafruit.com/character-lcds/python-circuitpython",
     "rs" : 22,
     "en" : 17,
     "d4" : 25,
     "d5" : 24,
     "d6" : 23,
-    "d7" : 18
+    "d7" : 18,
+    "r" : 8,
+    "g" : 12,
+    "b" : 13
   }
 }
