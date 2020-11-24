@@ -46,4 +46,4 @@ This is more straightforward. Setup is based on these [instructions](https://lea
 
 ## Schematic
 
-![Schematic 0.0.1](/schema0.0.1.png?raw=true)
+To come....
