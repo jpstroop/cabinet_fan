@@ -12,8 +12,14 @@ from os.path import dirname
 from os.path import exists
 from os.path import expanduser
 from os.path import join
+from signal import SIGTERM
+from signal import signal
+from sys import exit
 from time import sleep
 import board
+
+def sigterm_handler(_signo, _stack_frame):
+    exit(0)
 
 def find_config():
     '''~/cabinet_fan.json will override ./config.json, but the assumption
@@ -95,10 +101,10 @@ class Fan():
 
 
 if __name__ == "__main__":
+    signal(SIGTERM, sigterm_handler)
     config = load_config(find_config())
     bme280 = configure_bme280(config)
     lcd = configure_lcd(config)
     fan = Fan(config)
-    exit_callback(shutdown, fan, lcd, log=True)
-    run(config, bme280, lcd, fan, log=True)
-
+    exit_callback(shutdown, fan, lcd, log=False)
+    run(config, bme280, lcd, fan, log=False)
