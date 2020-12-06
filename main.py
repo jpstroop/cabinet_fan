@@ -18,12 +18,16 @@ from sys import exit
 from time import sleep
 import board
 
+from logger import Logger
+
+logger = Logger()
+
 def sigterm_handler(_signo, _stack_frame):
     exit(0)
 
 def find_config():
-    '''~/cabinet_fan.json will override ./config.json, but the assumption
-    is that ~/cabinet_fan.json will contain all values; there is no inheritance.
+    '''~/cabinet_fan.json will override ./config.json, but  ~/cabinet_fan.json
+    must contain all values; there is no inheritance.
     '''
     local = join(expanduser('~'), 'cabinet_fan.json')
     sibling = join(dirname(__file__), 'config.json')
@@ -53,35 +57,32 @@ def configure_bme280(config):
     i2c = I2C(board.SCL, board.SDA)
     return Adafruit_BME280_I2C(i2c, address=address)
 
-def sample_temp(bme280, log=False):
+def sample_temp(bme280):
     temp_f = bme280.temperature * 1.8 + 32
-    if log:
-        print(f'{dt.now() } sample: {temp_f}')
     return temp_f
 
-def shutdown(fan, lcd, log=False):
-    if log:
-        print(f'{dt.now()} shutting down...', end='' )
+def shutdown(fan, lcd):
+    logger.dump()
     lcd.clear()
     fan.off()
-    if log:
-        print(f'Done')
 
-def run(config, bme280, lcd, fan, log=False):
+def run(config, bme280, lcd, fan):
     sample_interval = config.get('sample_interval', 5)
-    temp = sample_temp(bme280, log)
+    temp = sample_temp(bme280)
     now = dt.now()
     sample_minute = now.minute
     while True:
-        line_1 = now.strftime('%b %d %I:%M %p') # TODO: make configurable
+        line_1 = now.strftime('%b %d %I:%M %p')
         line_2 = f'{round(temp, 1)} F'
         lcd.message = f'{line_1}\n{line_2}'
         if now.minute % sample_interval == 0 and now.minute != sample_minute:
-            temp = sample_temp(bme280, log)
+            temp = sample_temp(bme280)
             sample_minute = now.minute
-            if temp > fan.max_temp:
+            if temp > fan.max_temp and not fan.is_on:
+                 logger.append(now, temp, 'ON')
                  fan.on()
-            elif temp <= fan.max_temp:
+            elif temp <= fan.max_temp and fan.is_on:
+                 logger.append(now, temp, 'OFF')
                  fan.off()
         now = dt.now()
         sleep(1)
@@ -92,6 +93,10 @@ class Fan():
         self.power = DigitalInOut(getattr(board, f"D{config['fan'].get('power_pin', 15)}"))
         self.power.direction = Direction.OUTPUT
         self.power.value = False
+
+    @property
+    def is_on(self):
+        return self.power.value
 
     def on(self):
         self.power.value = True
@@ -106,5 +111,5 @@ if __name__ == "__main__":
     bme280 = configure_bme280(config)
     lcd = configure_lcd(config)
     fan = Fan(config)
-    exit_callback(shutdown, fan, lcd, log=False)
-    run(config, bme280, lcd, fan, log=False)
+    exit_callback(shutdown, fan, lcd)
+    run(config, bme280, lcd, fan)

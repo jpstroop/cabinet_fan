@@ -4,7 +4,7 @@
   "bme280_address" : "0x76",
   "fan" : {
     "power_pin" : 15,
-    "max_temp" : 78
+    "max_temp" : 77
   },
   "lcd" : {
     "rs" : 22,
