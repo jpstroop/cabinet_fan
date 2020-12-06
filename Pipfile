@@ -8,6 +8,9 @@ adafruit-circuitpython-charlcd = "*"
 Adafruit-Blinka = "*"
 "RPi.GPIO" = "*"
 adafruit-circuitpython-bmp280 = "*"
+adafruit-blinka = "*"
+sysv-ipc = "*"
+colour = "*"
 
 [dev-packages]
 

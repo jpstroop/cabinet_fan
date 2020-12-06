@@ -15,32 +15,19 @@ from pulseio import PWMOut
 from time import sleep
 import board
 
+from lcd import configure_lcd
+
 class App()
     def __init__(self):
         config = App._load_config()
         sensor_config = config['temp_sensors']
         self.onboard_sensor = TempSensor(sensor_config['onboard_pin'], 0)
         self.cabinet_sensor = TempSensor(sensor_config['cabinet_pin'], 1)
-        self.lcd = App._config_lcd(config['lcd'])
+        self.lcd = configure_lcd(config['lcd'])
         self.fan = Fan(config['fan']['power_pin'])
         self.sample_interval = config['app']['sample_interval']
         self.max_temp = config['app']['max_temp']
         register_exit_callback(self._shutdown())
-
-    @staticmethod
-    def _config_lcd(config, cols=20, rows=4):
-        rs = DigitalInOut(getattr(board, f"D{config.get('rs', 22)}"))
-        en = DigitalInOut(getattr(board, f"D{config.get('en', 17)}"))
-        d4 = DigitalInOut(getattr(board, f"D{config.get('d4', 25)}"))
-        d5 = DigitalInOut(getattr(board, f"D{config.get('d5', 24)}"))
-        d6 = DigitalInOut(getattr(board, f"D{config.get('d6', 23)}"))
-        d7 = DigitalInOut(getattr(board, f"D{config.get('d7', 18)}"))
-        red = PWMOut(getattr(board, f"D{config['lcd'].get('r', 21)}"))
-        green = PWMOut(getattr(board, f"D{config['lcd'].get('g', 12)}"))
-        blue = PWMOut(getattr(board, f"D{config['lcd'].get('b', 13)}"))
-        lcd = Character_LCD_RGB(rs, en, d4, d5, d6, d7, cols, rows, red, green, blue)
-        lcd.clear()
-        return lcd
 
     def _shutdown(self):
         self.lcd.clear()
