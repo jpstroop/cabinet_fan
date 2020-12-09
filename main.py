@@ -1,7 +1,4 @@
-from adafruit_bmp280 import Adafruit_BMP280_SPI
-from adafruit_character_lcd.character_lcd import Character_LCD_RGB
 from atexit import register as register_exit_callback
-from busio import SPI
 from datetime import datetime as dt
 from digitalio import DigitalInOut
 from digitalio import Direction
@@ -16,13 +13,14 @@ from time import sleep
 import board
 
 from lcd import configure_lcd
+from bmp280 import TempSensor
 
 class App()
     def __init__(self):
         config = App._load_config()
         sensor_config = config['temp_sensors']
-        self.onboard_sensor = TempSensor(sensor_config['onboard_pin'], 0)
-        self.cabinet_sensor = TempSensor(sensor_config['cabinet_pin'], 1)
+        self.onboard_sensor = TempSensor(**sensor_config['onboard'])
+        self.cabinet_sensor = TempSensor(**sensor_config['cabinet'])
         self.lcd = configure_lcd(config['lcd'])
         self.fan = Fan(config['fan']['power_pin'])
         self.sample_interval = config['app']['sample_interval']
@@ -73,23 +71,6 @@ class App()
                      fan.off()
             now = dt.now()
             sleep(1)
-
-class TempSensor():
-    def __init__(self, pin_no, spi_interface):
-        spi = None
-        if spi_interface == 0:
-            spi = SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-        elif spi_interface == 1:
-            spi = SPI(board.SCK_1, MOSI=board.MOSI_1, MISO=board.MISO_1)
-        pin = getattr(board, f'D{pin_no}')
-        cs = DigitalInOut(pin)
-        self.sensor = Adafruit_BMP280_SPI(spi, cs)
-
-    def sample_temp(unit='F'):
-        if unit == 'F':
-            return round(bmp280.temperature * 1.8 + 32, 1)
-        else:
-            return round(bmp280.temperature, 1)
 
 class Fan():
     def __init__(self, power_pin):

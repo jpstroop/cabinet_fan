@@ -6,10 +6,19 @@
     "max_temp" : 78
   },
   "temp_sensors" : {
-    "note" : "The onboard sensor is on the SPI0 interface; cabinet is SPI1",
-    "see" : "https://pinout.xyz/pinout/spi",
-    "onboard_pin" : 5,
-    "cabinet_pin" : 6
+    "note" : "BMP280s can run on the same SPI as long as the CS pin is different",
+    "onboard" : {
+         "cs_pin" : 5,
+         "miso_pin" : 9,
+         "mosi_pin" : 10,
+         "sclk_pin" : 11
+     },
+    "cabinet" : {
+         "cs_pin" : 6,
+         "miso_pin" : 9,
+         "mosi_pin" : 10,
+         "sclk_pin" : 11
+     }
   },
   "fan" : {
     "power_pin" : 15
