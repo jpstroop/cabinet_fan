@@ -28,11 +28,11 @@
     "see" : "https://learn.adafruit.com/character-lcds/python-circuitpython",
     "rs" : 22,
     "en" : 17,
-    "d4" : 25,
+    "d4" : 7,
     "d5" : 24,
     "d6" : 23,
-    "d7" : 18,
-    "r" : 8,
+    "d7" : 8,
+    "r" : 16,
     "g" : 12,
     "b" : 13
   }
