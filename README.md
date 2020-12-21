@@ -22,7 +22,7 @@ See [Pipfile](./Pipfile) or [requirements.txt](./requirements.txt) and install u
 
 #### BME280
 
- * [Instructions](https://www.raspberrypi-spy.co.uk/2016/07/using-bme280-i2c-temperature-pressure-sensor-in-python)
+ * Follow these [instructions](https://www.raspberrypi-spy.co.uk/2016/07/using-bme280-i2c-temperature-pressure-sensor-in-python) or just use `raspi-config` to enable the I2C interface.
  * Test your connection with `i2cdetect -y 1`
 
     You should see something like:
@@ -41,6 +41,21 @@ See [Pipfile](./Pipfile) or [requirements.txt](./requirements.txt) and install u
 #### HD44780
 
  * [Instructions](https://learn.adafruit.com/drive-a-16x2-lcd-directly-with-a-raspberry-pi/overview/)
+
+## Run as a Service
+
+See [`thermostat.service`](./thermostat.service). I usually download the source tarball to `/home/pi/apps`. Assuming you've done that, the setting in that script should work just fine. You may need to adjust the version information in the directory name and the location of the Python executable.
+
+To enable the service:
+
+```bash
+sudo systemctl link /home/pi/apps/cabinet_fan-0.0.4/thermostat.service
+sudo systemctl daemon-reload
+sudo systemctl enable thermostat.service
+sudo systemctl start thermostat.service
+```
+
+It should just work.
 
 ## Schematic
 

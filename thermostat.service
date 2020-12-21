@@ -1,15 +1,14 @@
 [Unit]
 Description=Network Box Thermostat
 After=network-online.target
- 
+
 [Service]
-Environment=PYTHONPATH=/home/pi/.local/share/virtualenvs/cabinet_fan-0.0.1-Ym2HW4xX
-ExecStart=/home/pi/.local/share/virtualenvs/cabinet_fan-0.0.1-Ym2HW4xX/bin/python /home/pi/workspace/cabinet_fan-0.0.1/main.py
-WorkingDirectory=/home/pi/workspace/cabinet_fan-0.0.1/
+ExecStart=/usr/local/bin/python3.8 /home/pi/apps/cabinet_fan-0.0.3/main.py
+WorkingDirectory=/home/pi/apps/cabinet_fan-0.0.3/
 StandardOutput=inherit
 StandardError=inherit
 Restart=always
 User=pi
- 
+
 [Install]
 WantedBy=multi-user.target
