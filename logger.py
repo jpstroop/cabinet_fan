@@ -10,6 +10,7 @@ class Logger():
     def append(self, time, temp, action):
         self.log.append({'time': time.isoformat(), 'temp': temp, 'action': action})
         self._trim()
+        self.dump()
         return True
 
     def dump(self):
